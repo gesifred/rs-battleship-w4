@@ -11,6 +11,16 @@ function broadcastRooms(app) {
         }
     });
 }
+function broadcastWinners(app){
+    wsServer.clients.forEach(function each(client) {
+        if (client.readyState === WebSocket.OPEN) {
+            //const rooms = app.getUsableRooms();
+            const allWinners = app.getAllWinners();
+            //client.send(JSON.stringify({ type: "update_room", data: JSON.stringify(rooms), id: 0 }));
+            client.send(JSON.stringify({ type: "update_winners", data: JSON.stringify(allWinners), id: 0 }));
+        }
+    });
+}
 
 function createNullBoard() {
     let targetBoard = [[], [], [], [], [], [], [], [], [], []];
@@ -108,6 +118,7 @@ wsServer.on('connection', function connection(ws) {
             ws.send(JSON.stringify({ type: "reg", data: JSON.stringify({ name: user.name, index: id, error: false, errorText: null }), id: 0 }));
             ws.id = id;
             broadcastRooms(app);
+            broadcastWinners(app);
             //client.send(JSON.stringify({ type: "update_room", data: JSON.stringify([{ roomId: 1, roomUsers: [{ name: "test1", index: 0 }] }]), id: 0 }));
 
         }
@@ -182,12 +193,12 @@ wsServer.on('connection', function connection(ws) {
             const gameId = data.gameId;
             const currPlayer = data.indexPlayer;
             let coord;
-            if (info.type === "randomAttack"){
-                coord = [getRandomCoord(10), getRandomCoord(10)];    
+            if (info.type === "randomAttack") {
+                coord = [getRandomCoord(10), getRandomCoord(10)];
             } else {
                 coord = [data.x, data.y];
             }
-            
+
             const users = app.getRoomUsers(gameId);
             const nextPlayerIndex = currPlayer === users[0].index ? users[1].index : users[0].index;
 
@@ -268,8 +279,15 @@ wsServer.on('connection', function connection(ws) {
                                         }
                                     }
                                 }
-                                if (checkAllKilled(nextPlayerIndex,tempBoard)){
+                                if (checkAllKilled(nextPlayerIndex, tempBoard)) {
                                     client.send(JSON.stringify({ type: "finish", data: JSON.stringify({ winPlayer: currPlayer }), id: 0 }));
+                                    if(client.id === currPlayer) {
+                                        app.addWinner(currPlayer);
+                                        app.removeRoomFromDb(gameId);
+                                    }
+                                    //client.send(JSON.stringify({ type: "update_winners", data: JSON.stringify(allWinners), id: 0 }));
+                                    broadcastWinners(app);
+                                    broadcastRooms(app);
                                 }
                                 break;
                             default:
