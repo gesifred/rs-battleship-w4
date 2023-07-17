@@ -2,6 +2,12 @@ import UsersDb from "./users_db.js";
 import RoomsDb from "./rooms_db.js";
 
 class App {
+    verifyUser(name){
+        return UsersDb.findUserByName(name);
+    }
+    getUserId(name){
+        return UsersDb.findUserId(name);
+    }
     createUser(userData) {
         const userId = UsersDb.getSize() + 1;
         UsersDb.addUser(userId, userData); // userData = { name: user.name, password: user.password }

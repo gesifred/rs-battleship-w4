@@ -41,7 +41,7 @@ class RoomsDb {
     static getAllRooms() {
         const allRooms = [];
         for (const entry of RoomsDb.rooms.entries()) {
-            console.log("adding", entry[0], entry[1]);
+            //console.log("adding", entry[0], entry[1]);
             allRooms.push(entry[1]);
         }
         return allRooms;
@@ -68,7 +68,7 @@ class RoomsDb {
     static getAllWinners() {
         const allWinners = [];
         for (const entry of RoomsDb.winners.entries()) {
-            console.log("adding", entry[0], entry[1]);
+            //console.log("adding", entry[0], entry[1]);
             allWinners.push(entry[1]);
         }
         return allWinners;

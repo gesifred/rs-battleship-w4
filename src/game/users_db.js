@@ -38,7 +38,6 @@ class UsersDb {
     static getAllUsers() {
         const allUsers = [];
         for (const entry of UsersDb.users.entries()) {
-            console.log("adding", entry[0], entry[1]);
             allUsers.push(entry[1]);
         }
         return allUsers;
@@ -49,7 +48,24 @@ class UsersDb {
     }
 
     static findUserByName(name){
-        
+        let user;
+        for (const entry of UsersDb.users.entries()) {
+            //console.log("adding", entry[0], entry[1]);
+            if(entry[1].name === name){
+                user = entry[1];
+            }
+        }
+        return user;
+    }
+    static findUserId(name){
+        let userId;
+        for (const entry of UsersDb.users.entries()) {
+            //console.log("adding", entry[0], entry[1]);
+            if(entry[1].name === name){
+                userId = entry[0];
+            }
+        }
+        return userId;
     }
 }
 

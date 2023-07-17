@@ -11,7 +11,7 @@ function broadcastRooms(app) {
         }
     });
 }
-function broadcastWinners(app){
+function broadcastWinners(app) {
     wsServer.clients.forEach(function each(client) {
         if (client.readyState === WebSocket.OPEN) {
             //const rooms = app.getUsableRooms();
@@ -100,6 +100,11 @@ function getRandomCoord(max) {
 wsServer.on('connection', function connection(ws) {
     ws.on('error', console.error);
 
+    ws.on('disconnect', function () {
+        console.log('client disconnected');
+        // socket is disconnected
+    });
+
     ws.on('message', function message(data) {
         const app = new App();
         console.log('received: %s', data);
@@ -114,9 +119,20 @@ wsServer.on('connection', function connection(ws) {
         //console.log(user);
         if (info.type === "reg") {
             console.log("reg");
-            let id = app.createUser({ name: user.name, password: user.password });
-            ws.send(JSON.stringify({ type: "reg", data: JSON.stringify({ name: user.name, index: id, error: false, errorText: null }), id: 0 }));
-            ws.id = id;
+            let tempUser = app.verifyUser(user.name);
+            if (tempUser) {
+                if (user.password === tempUser.password) {
+                    let id = app.getUserId(user.name);
+                    ws.send(JSON.stringify({ type: "reg", data: JSON.stringify({ name: user.name, index: id, error: false, errorText: null }), id: 0 }));
+                    ws.id = id;
+                } else {
+                    ws.send(JSON.stringify({ type: "reg", data: JSON.stringify({ name: user.name, index: 0, error: true, errorText: "Wrong password" }), id: 0 }));
+                }
+            } else {
+                let id = app.createUser({ name: user.name, password: user.password });
+                ws.send(JSON.stringify({ type: "reg", data: JSON.stringify({ name: user.name, index: id, error: false, errorText: null }), id: 0 }));
+                ws.id = id;
+            }
             broadcastRooms(app);
             broadcastWinners(app);
             //client.send(JSON.stringify({ type: "update_room", data: JSON.stringify([{ roomId: 1, roomUsers: [{ name: "test1", index: 0 }] }]), id: 0 }));
@@ -281,7 +297,7 @@ wsServer.on('connection', function connection(ws) {
                                 }
                                 if (checkAllKilled(nextPlayerIndex, tempBoard)) {
                                     client.send(JSON.stringify({ type: "finish", data: JSON.stringify({ winPlayer: currPlayer }), id: 0 }));
-                                    if(client.id === currPlayer) {
+                                    if (client.id === currPlayer) {
                                         app.addWinner(currPlayer);
                                         app.removeRoomFromDb(gameId);
                                     }
@@ -297,9 +313,13 @@ wsServer.on('connection', function connection(ws) {
                 }
             });
         }
+        else if(info.type == "single_play"){
+            
+        }
     });
     //ws.send('something');
 });
-
-
+wsServer.on('close', function () {
+    console.log('disconnected');
+});
 export { wsServer };

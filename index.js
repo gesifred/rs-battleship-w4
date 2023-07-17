@@ -15,7 +15,5 @@ httpServer.on('upgrade', function upgrade(request, socket, head) {
     }
   });
 
-//import { randomUUID }  from "node:crypto";
-//console.log("uuid ", randomUUID());
 console.log(`Start static http server on the ${HTTP_PORT} port!`);
 httpServer.listen(HTTP_PORT);
