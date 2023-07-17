@@ -1,5 +1,6 @@
 import UsersDb from "./users_db.js";
 import RoomsDb from "./rooms_db.js";
+import BoardsDb from "./boards_db.js";
 
 class App {
     verifyUser(name){
@@ -16,9 +17,9 @@ class App {
     createRoom(userId) {
         const roomId = RoomsDb.getSize() + 1;
         const user = UsersDb.getUser(userId);
-        console.log(user);
+        //console.log(user);
         RoomsDb.addRoom(roomId, { roomId: roomId, roomUsers: [{ name: user.name, index: userId }] });
-        console.log(RoomsDb.rooms);
+        //console.log(RoomsDb.rooms);
         //console.log(RoomsDb.rooms.get(1));
     }
     getRooms() {
@@ -38,10 +39,10 @@ class App {
     addUserToRoom(roomId, userId) {
         const user2 = UsersDb.getUser(userId);
         let room = RoomsDb.getRoom(roomId);
-        console.log(room);
+        //console.log(room);
         const userId1 = room.roomUsers[0].index;
         const user1 = UsersDb.getUser(userId1);
-        console.log(user1);
+        //console.log(user1);
         const players = [];
         players.push({ name: user1.name, index: userId1 })//user already in room
         players.push({ name: user2.name, index: userId });//adding that request join
@@ -53,20 +54,20 @@ class App {
         if (!boards) {
             let tmpObj = {};
             tmpObj[userId] = board;
-            RoomsDb.addBoard(roomId, tmpObj);
+            BoardsDb.addBoard(roomId, tmpObj);
         } else {
             boards[userId] = board;
-            RoomsDb.addBoard(roomId, boards);
+            BoardsDb.addBoard(roomId, boards);
         }
     }
 
     getBoard(roomId) {
-        return RoomsDb.getBoard(roomId);
+        return BoardsDb.getBoard(roomId);
     }
     updateBoard(roomId, board) { //TODO
         //let boards =this.getBoard(roomId)
         //let userBoard = boards[userId];
-        RoomsDb.addBoard(roomId, board);
+        BoardsDb.addBoard(roomId, board);
     }
 
     getRoomUsers(roomId) {

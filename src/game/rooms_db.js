@@ -3,7 +3,7 @@
 class RoomsDb {
     static rooms = new Map();
     static winners = new Map();
-    static boardInRooms = new Map();
+    //static boardInRooms = new Map();
 
     /*constructor() {
         RoomsDb.rooms = new Map<string, User>();
@@ -51,12 +51,12 @@ class RoomsDb {
         return RoomsDb.rooms.size;
     }
 
-    static addBoard(roomId, boards) {
+    /*static addBoard(roomId, boards) {
         RoomsDb.boardInRooms.set(roomId, boards);
     }
     static getBoard(roomId) {
         return RoomsDb.boardInRooms.get(roomId);
-    }
+    }*/
 
     static addWinner(name, wins) {
         RoomsDb.winners.set(name, wins);

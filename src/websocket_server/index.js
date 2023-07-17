@@ -38,12 +38,12 @@ function createUserBoard(ships) {
         if (ship.direction) { //vertical ship
             for (let i = ship.position.y, j = ship.position.x; i <= ship.position.y + ship.length - 1; i++) {
                 board[i][j] = { chars: "S", position: ship.position, length: ship.length, direction: ship.direction };
-                console.log("len ", ship.length, " vertical pos i ", i, " pos j ", j, " ship ", ship.position)
+                //console.log("len ", ship.length, " vertical pos i ", i, " pos j ", j, " ship ", ship.position)
             }
         } else { //horizontal ship
             for (let i = ship.position.y, j = ship.position.x; j <= ship.position.x + ship.length - 1; j++) {
                 board[i][j] = { chars: "S", position: ship.position, length: ship.length, direction: ship.direction };
-                console.log("len ", ship.length, " horizontal pos i ", i, " pos j ", j, " ship ", ship.position)
+                //console.log("len ", ship.length, " horizontal pos i ", i, " pos j ", j, " ship ", ship.position)
             }
         }
     });
@@ -107,18 +107,18 @@ wsServer.on('connection', function connection(ws) {
 
     ws.on('message', function message(data) {
         const app = new App();
-        console.log('received: %s', data);
+        //console.log('received: %s', data);
         let info = JSON.parse(data);
         let user;
-        console.log("TYPE", info.type);
-        console.log("data", info.data, typeof info.data)
+        //console.log("TYPE", info.type);
+        //console.log("data", info.data, typeof info.data)
         if (info.data) {
             user = JSON.parse(info.data);
             //console.log(user);
         }
         //console.log(user);
         if (info.type === "reg") {
-            console.log("reg");
+            console.log("registered user");
             let tempUser = app.verifyUser(user.name);
             if (tempUser) {
                 if (user.password === tempUser.password) {
@@ -167,7 +167,7 @@ wsServer.on('connection', function connection(ws) {
         else if (info.type == "add_ships") {
             console.log("adding ships");
             const shipsInfo = JSON.parse(info.data)
-            console.log(shipsInfo);
+            //console.log(shipsInfo);
             ws.shipsReady = true;
             ws.ships = shipsInfo.ships;
             // false is horizontal, start in popa/stern
@@ -193,10 +193,10 @@ wsServer.on('connection', function connection(ws) {
                         if (client.id === users[0].index || client.id === users[1].index) {
                             client.send(JSON.stringify({ type: "start_game", data: JSON.stringify({ ships: client.ships, currentPlayerIndex: client.id }), id: 0 }));
                             client.send(JSON.stringify({ type: "turn", data: JSON.stringify({ currentPlayer: users[0].index }), id: 0 }));
-                            console.log(`user ${client.id}-board: ready ${client.tempBoard}`);
+                            /*console.log(`user ${client.id}-board: ready ${client.tempBoard}`);
                             console.log(client.tempBoard);
                             console.log(`user ${client.id}-board: from db`);
-                            console.log(app.getBoard(shipsInfo.gameId)[client.id]);
+                            console.log(app.getBoard(shipsInfo.gameId)[client.id]);*/
                         }
                     }
                 });
@@ -204,7 +204,7 @@ wsServer.on('connection', function connection(ws) {
 
         }
         else if (info.type === "attack" || info.type === "randomAttack") {
-            console.log("attakc");
+            //console.log("attakc");
             const data = JSON.parse(info.data);
             const gameId = data.gameId;
             const currPlayer = data.indexPlayer;
@@ -218,10 +218,10 @@ wsServer.on('connection', function connection(ws) {
             const users = app.getRoomUsers(gameId);
             const nextPlayerIndex = currPlayer === users[0].index ? users[1].index : users[0].index;
 
-            console.log("hitting on ", coord, "by player ", currPlayer);
+            //console.log("hitting on ", coord, "by player ", currPlayer);
 
             let tempBoard = app.getBoard(gameId);
-            console.log("must attack board from player ", nextPlayerIndex)
+            //console.log("must attack board from player ", nextPlayerIndex)
             //console.log(tempBoard[nextPlayerIndex]);
             let element = tempBoard[nextPlayerIndex][coord[1]][[coord[0]]];
             let result;
@@ -270,11 +270,11 @@ wsServer.on('connection', function connection(ws) {
                                 let finalI = element.position.y;
                                 let finalJ = element.position.x;
                                 if (element.direction) { //vertical
-                                    console.log("vertical")
+                                    //console.log("vertical")
                                     finalI += element.length + 1;
                                     finalJ += 2;
                                 } else { //horizontal
-                                    console.log("horizontal")
+                                    //console.log("horizontal")
                                     finalI += 2;
                                     finalJ += element.length + 1;
                                 }
@@ -283,7 +283,7 @@ wsServer.on('connection', function connection(ws) {
                                 originJ = originJ > MAX_R ? MAX_R : originJ < MIN_R ? MIN_R : originJ;
                                 finalI = finalI > MAX_R ? MAX_R : finalI < MIN_R ? MIN_R : finalI;
                                 finalJ = finalJ > MAX_R ? MAX_R : finalJ < MIN_R ? MIN_R : finalJ;
-                                console.log("origin i ", originI, " origin j ", originJ, " final i ", finalI, " final j ", finalJ);
+                                //console.log("origin i ", originI, " origin j ", originJ, " final i ", finalI, " final j ", finalJ);
                                 for (let i = originI; i <= finalI - 1; i++) {
                                     for (let j = originJ; j <= finalJ - 1; j++) {
                                         if (tempBoard[nextPlayerIndex][i][j]) {
